@@ -2,8 +2,8 @@ import * as Phaser from "phaser";
 import ScaleModes = Phaser.Scale.ScaleModes;
 import GameScene from "./GameScene.ts";
 export const SHARED_CONFIG = {
-    width: 1280,
-    height: 720,
+    width: 300,
+    height: 600,
     debug: {
         arcade: false,
         hexes: false,
@@ -20,7 +20,7 @@ const config: Phaser.Types.Core.GameConfig & typeof SHARED_CONFIG = {
     scale: {
         mode: ScaleModes.RESIZE,
     },
-    backgroundColor: "#021114",
+    backgroundColor: "#107210",
     render: {
         pixelArt: true,
     },
