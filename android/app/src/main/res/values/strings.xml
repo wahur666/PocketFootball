@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">PocketFootball</string>
+    <string name="title_activity_main">PocketFootball</string>
+    <string name="package_name">com.wahur666.pocketfootball</string>
+    <string name="custom_url_scheme">com.wahur666.pocketfootball</string>
+</resources>
