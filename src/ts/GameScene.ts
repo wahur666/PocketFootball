@@ -4,11 +4,16 @@ import blue_ball from "../assets/imgs/pieceBlue_border12.png";
 import red_player from "../assets/imgs/pieceRed_border06.png";
 import red_ball from "../assets/imgs/pieceRed_border11.png";
 import {SHARED_CONFIG} from "./index.ts";
+import GameController from "./GameController.ts";
+import Pointer = Phaser.Input.Pointer;
+import Vector2 = Phaser.Math.Vector2;
 
 
 export const calculateRect = (width: number, drawWidth: number, padding: number) => width * drawWidth + padding;
 
-enum Images {
+
+
+export enum Images {
     RED_PLAYER = "red-player",
     BLUE_PLAYER = "blue-player",
     RED_BALL = "red-ball",
@@ -19,11 +24,13 @@ enum Images {
 export default class GameScene extends Phaser.Scene {
 
     private graphics: Phaser.GameObjects.Graphics;
+    private gameController: GameController;
 
     constructor() {
         super("game");
         // @ts-ignore
         window.game = this;
+        this.gameController = new GameController(this);
     }
 
     preload() {
@@ -35,60 +42,87 @@ export default class GameScene extends Phaser.Scene {
 
     create() {
         this.graphics = this.add.graphics();
+        this.gameController.create();
         this.createFootballBoard();
-        this.add.image(300, 300, Images.RED_PLAYER);
-        this.add.image(300, 350, Images.BLUE_BALL);
+    }
+
+    get canvasWidth(): number {
+        return this.game.canvas.width;
+    }
+
+    get canvasHeight(): number {
+        return this.game.canvas.height
+    }
+
+    get drawWidth(): number {
+        return Math.min((this.canvasWidth - 10) / this.gameController.boardWidth | 0, 50)
+    }
+
+    get halfDrawWidth(): number {
+        return this.drawWidth / 2 | 0;
+    }
+
+    get calculatedLeftPadding(): number {
+        return (this.canvasWidth - this.drawWidth * this.gameController.boardWidth) / 2
+    }
+
+    get calculatedTopPadding(): number {
+        return (this.canvasHeight - this.drawWidth * this.gameController.boardHeight) / 2
+    }
+
+    mousePosToGridPos(ev: Pointer): Vector2 {
+        const pos = ev.position;
+        const x = Math.floor((pos.x - this.calculatedLeftPadding) / this.drawWidth);
+        const y = Math.floor((pos.y - this.calculatedTopPadding) / this.drawWidth);
+        return new Vector2(x, y);
+    }
+
+    gridPosToWorldPos(pos: Vector2): Vector2 {
+        const x = calculateRect(pos.x, this.drawWidth, this.calculatedLeftPadding) + this.halfDrawWidth;
+        const y = calculateRect(pos.y, this.drawWidth, this.calculatedTopPadding) + this.halfDrawWidth;
+        return new Vector2(x, y);
     }
 
     private createFootballBoard() {
-        const boardWidth = 9;
-        const boardHeight = 10;
-        const canvasWidth = this.game.canvas.width;
-        const canvasHeight = this.game.canvas.height;
-
-        let drawWidth = Math.min((canvasWidth - 10) / boardWidth | 0, 50);
-
-        let calculatedLeftPadding = (canvasWidth - drawWidth * boardWidth) / 2;
-        let calculatedTopPadding = (canvasHeight - drawWidth * boardHeight) / 2;
         let flag = false;
         // Draw checkerboard pattern
-        for (let i = 0; i < boardWidth; i++) {
+        for (let i = 0; i < this.gameController.boardWidth; i++) {
             flag = !flag;
-            for (let j = 0; j < boardHeight; j++) {
+            for (let j = 0; j < this.gameController.boardHeight; j++) {
                 flag = !flag;
                 if (j === 0 && [0, 1, 2, 6, 7, 8].includes(i)) continue;
-                if (j === boardHeight - 1 && [0, 1, 2, 6, 7, 8].includes(i)) continue;
-                if (j === 0 || j === boardHeight - 1) {
+                if (j === this.gameController.boardHeight - 1 && [0, 1, 2, 6, 7, 8].includes(i)) continue;
+                if (j === 0 || j === this.gameController.boardHeight - 1) {
                     this.graphics.fillStyle(0xffffff);
                 } else if (flag) {
                     this.graphics.fillStyle(0x009933);
                 } else {
                     this.graphics.fillStyle(0x00e64d);
                 }
-                this.graphics.fillRect(calculateRect(i, drawWidth, calculatedLeftPadding), calculateRect(j, drawWidth, calculatedTopPadding), drawWidth, drawWidth);
+                this.graphics.fillRect(calculateRect(i, this.drawWidth, this.calculatedLeftPadding), calculateRect(j, this.drawWidth, this.calculatedTopPadding), this.drawWidth, this.drawWidth);
             }
         }
         // Draw penalty box
         this.graphics.lineStyle(3, 0xffffff);
-        this.graphics.strokeRect(calculateRect(3, drawWidth, calculatedLeftPadding), calculateRect(1, drawWidth, calculatedTopPadding), drawWidth * 3, drawWidth)
-        this.graphics.strokeRect(calculateRect(3, drawWidth, calculatedLeftPadding), calculateRect(boardHeight - 2, drawWidth, calculatedTopPadding), drawWidth * 3, drawWidth)
+        this.graphics.strokeRect(calculateRect(3, this.drawWidth, this.calculatedLeftPadding), calculateRect(1, this.drawWidth, this.calculatedTopPadding), this.drawWidth * 3, this.drawWidth)
+        this.graphics.strokeRect(calculateRect(3, this.drawWidth, this.calculatedLeftPadding), calculateRect(this.gameController.boardHeight - 2, this.drawWidth, this.calculatedTopPadding), this.drawWidth * 3, this.drawWidth)
 
         // Draw middle circle
-        this.graphics.strokeCircle(canvasWidth / 2, canvasHeight / 2, drawWidth * 1.5)
+        this.graphics.strokeCircle(this.canvasWidth / 2, this.canvasHeight / 2, this.drawWidth * 1.5)
 
         // Draw border
-        this.graphics.strokeRect(calculateRect(0, drawWidth, calculatedLeftPadding), calculateRect(0, drawWidth, calculatedTopPadding), drawWidth * boardWidth, drawWidth * boardHeight)
+        this.graphics.strokeRect(calculateRect(0, this.drawWidth, this.calculatedLeftPadding), calculateRect(0, this.drawWidth, this.calculatedTopPadding), this.drawWidth * this.gameController.boardWidth, this.drawWidth * this.gameController.boardHeight)
         // Draw half way line
-        this.graphics.lineBetween(calculatedLeftPadding, canvasHeight / 2, canvasWidth - calculatedLeftPadding, canvasHeight / 2);
+        this.graphics.lineBetween(this.calculatedLeftPadding, this.canvasHeight / 2, this.canvasWidth - this.calculatedLeftPadding, this.canvasHeight / 2);
 
         this.graphics.lineStyle(3, 0x000000);
         // Draw net border
-        this.graphics.strokeRect(calculateRect(3, drawWidth, calculatedLeftPadding), calculateRect(0, drawWidth, calculatedTopPadding), drawWidth * 3, drawWidth)
-        this.graphics.strokeRect(calculateRect(3, drawWidth, calculatedLeftPadding), calculateRect(boardHeight - 1, drawWidth, calculatedTopPadding), drawWidth * 3, drawWidth)
+        this.graphics.strokeRect(calculateRect(3, this.drawWidth, this.calculatedLeftPadding), calculateRect(0, this.drawWidth, this.calculatedTopPadding), this.drawWidth * 3, this.drawWidth)
+        this.graphics.strokeRect(calculateRect(3, this.drawWidth, this.calculatedLeftPadding), calculateRect(this.gameController.boardHeight - 1, this.drawWidth, this.calculatedTopPadding), this.drawWidth * 3, this.drawWidth)
         // Draw net
         for (let i = 3; i < 6; i++) {
-            this.drawNet(drawWidth, calculateRect(i, drawWidth, calculatedLeftPadding), calculateRect(0, drawWidth, calculatedTopPadding));
-            this.drawNet(drawWidth, calculateRect(i, drawWidth, calculatedLeftPadding), calculateRect(boardHeight - 1, drawWidth, calculatedTopPadding));
+            this.drawNet(this.drawWidth, calculateRect(i, this.drawWidth, this.calculatedLeftPadding), calculateRect(0, this.drawWidth, this.calculatedTopPadding));
+            this.drawNet(this.drawWidth, calculateRect(i, this.drawWidth, this.calculatedLeftPadding), calculateRect(this.gameController.boardHeight - 1, this.drawWidth, this.calculatedTopPadding));
         }
     }
 
@@ -110,7 +144,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     update(time: number, delta: number) {
-
+        this.gameController.update(time, delta);
     }
 
 }
