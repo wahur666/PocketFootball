@@ -17,11 +17,12 @@
     "@capacitor/core": "latest",
     "@capacitor/splash-screen": "latest",
     "heap-js": "^2.3.0",
-    "phaser": "^3.60.0"
+    "phaser": "^3.60.0",
+    "socket.io-client": "^4.7.2"
   },
   "devDependencies": {
-    "@capacitor/cli": "latest",
     "@babel/core": "^7.21.4",
+    "@capacitor/cli": "latest",
     "@typescript-eslint/eslint-plugin": "^5.58.0",
     "@typescript-eslint/parser": "^5.58.0",
     "eslint": "^8.38.0",
@@ -31,7 +32,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^2.8.7",
     "typescript": "^5.0.4",
-    "vite": "^2.9.13",
+    "vite": "^4.4.9",
     "vite-plugin-checker": "^0.6.2"
   },
   "author": "",
