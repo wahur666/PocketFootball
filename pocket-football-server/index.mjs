@@ -4,15 +4,11 @@ import { Server } from "socket.io";
 import cors from "cors";
 
 const app = express();
+app.use(express.static("../dist"))
 app.use(cors());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: "*"
-});
-
-
-app.get("/", (req, res) => {
-  res.send("Hello world");
 });
 
 io.on("connection", (socket) => {

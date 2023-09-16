@@ -31,6 +31,7 @@ export default class GameScene extends Phaser.Scene {
         // @ts-ignore
         window.game = this;
         this.gameController = new GameController(this);
+        console.log(this.gameController.field);
     }
 
     preload() {

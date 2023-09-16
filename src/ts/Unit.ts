@@ -5,7 +5,7 @@ export default abstract class Unit extends Phaser.GameObjects.Sprite {
     teamRed: boolean;
     SIZE = 64;
     graphics: Phaser.GameObjects.Graphics;
-    selected: boolean = true;
+    selected: boolean = false;
 
     protected constructor(scene: Phaser.Scene, x: number, y: number, texture: string, teamRed: boolean) {
         super(scene, x, y, texture);

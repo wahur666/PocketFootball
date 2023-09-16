@@ -17,6 +17,8 @@
     "noImplicitAny": false,
     "strictPropertyInitialization": false,
     "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact"
   },
-  "include": ["src"],
+  "include": ["src"]
 }

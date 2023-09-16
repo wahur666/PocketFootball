@@ -1,0 +1,17 @@
+.absolute-zero {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    pointer-events: none;
+}
+
+.absolute-zero > * {
+    pointer-events: auto;
+}
+
+.container {
+    max-width: 500px !important;
+    flex: 1;
+}

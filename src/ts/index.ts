@@ -2,6 +2,11 @@ import * as Phaser from "phaser";
 import ScaleModes = Phaser.Scale.ScaleModes;
 import GameScene from "./GameScene.ts";
 import { io } from "socket.io-client";
+import { Main } from "./ui/main.tsx";
+import { render } from "preact";
+import "../css/tailwind.css";
+import "@picocss/pico/css/pico.min.css";
+import "../css/style.css";
 
 export const SHARED_CONFIG = {
     width: 300,
@@ -66,3 +71,5 @@ socket.on("connect_error", (e) => {
 socket.on("disconnect", reason => {
     console.log("disonnect", reason);
 });
+
+render(Main(), document.getElementById("root")!)
