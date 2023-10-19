@@ -3,7 +3,6 @@ import blue_player from "../assets/imgs/pieceBlue_border07.png";
 import blue_ball from "../assets/imgs/pieceBlue_border12.png";
 import red_player from "../assets/imgs/pieceRed_border06.png";
 import red_ball from "../assets/imgs/pieceRed_border11.png";
-import {SHARED_CONFIG} from "./index.ts";
 import GameController from "./GameController.ts";
 import Pointer = Phaser.Input.Pointer;
 import Vector2 = Phaser.Math.Vector2;
